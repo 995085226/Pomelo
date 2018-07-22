@@ -3,10 +3,13 @@ package com.example.hpf.pomelo.mvp.presenter;
 import android.app.Application;
 
 import com.example.hpf.pomelo.mvp.contract.OneContract;
+import com.example.hpf.pomelo.mvp.model.entity.MyItem;
 import com.jess.arms.di.scope.FragmentScope;
 import com.jess.arms.http.imageloader.ImageLoader;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.mvp.BasePresenter;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -36,5 +39,10 @@ public class OnePresenter extends BasePresenter<OneContract.Model, OneContract.V
         this.mAppManager = null;
         this.mImageLoader = null;
         this.mApplication = null;
+    }
+
+    public void getItemList(){
+        List<MyItem> listData = mModel.getListData();
+        mRootView.showList(listData);
     }
 }

@@ -1,12 +1,13 @@
 package com.example.hpf.pomelo.di.module;
 
 import android.content.Context;
-import android.service.notification.ConditionProviderService;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.hpf.pomelo.mvp.contract.OneContract;
+import com.example.hpf.pomelo.mvp.contract.ThreeContract;
 import com.example.hpf.pomelo.mvp.model.OneModel;
+import com.example.hpf.pomelo.mvp.model.ThreeModel;
 import com.example.hpf.pomelo.mvp.ui.adapter.OneAdapter;
 import com.jess.arms.di.scope.FragmentScope;
 
@@ -15,8 +16,8 @@ import dagger.Provides;
 
 
 @Module
-public class OneModule {
-    private OneContract.View view;
+public class ThreeModule {
+    private ThreeContract.View view;
     private Context mContext;
 
     /**
@@ -24,27 +25,23 @@ public class OneModule {
      *
      * @param view
      */
-    public OneModule(OneContract.View view,Context mContext) {
+    public ThreeModule(ThreeContract.View view, Context mContext) {
         this.view = view;
         this.mContext = mContext;
     }
 
     @FragmentScope
     @Provides
-    OneContract.View provideView() {
+    ThreeContract.View provideView() {
         return this.view;
     }
 
     @FragmentScope
     @Provides
-    OneContract.Model provideModel(OneModel model) {
+    ThreeContract.Model provideModel(ThreeModel model) {
         return model;
     }
-    @FragmentScope
-    @Provides
-    OneAdapter provideAdapter() {
-        return new OneAdapter();
-    }
+
 
     @FragmentScope
     @Provides
@@ -52,11 +49,5 @@ public class OneModule {
         return mContext;
     }
 
-    @FragmentScope
-    @Provides
-    RecyclerView.LayoutManager provideLayoutManager(Context mContext){
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        return linearLayoutManager;
-    }
+
 }

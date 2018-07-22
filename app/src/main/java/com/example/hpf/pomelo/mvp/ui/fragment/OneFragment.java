@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -55,7 +56,6 @@ public class OneFragment extends BaseSupportFragment<OnePresenter> implements On
 
     @Inject
     OneAdapter mOneAdapter;
-    private List<MyItem> itemList = new ArrayList<>();
 
     @Inject
     RecyclerView.LayoutManager layoutManager;
@@ -82,21 +82,9 @@ public class OneFragment extends BaseSupportFragment<OnePresenter> implements On
     }
 
     private void initRV() {
-        initListData();
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setAdapter(mOneAdapter);
-        mOneAdapter.addData(itemList);
-        mOneAdapter.notifyDataSetChanged();
-
-    }
-
-    private void initListData() {
-        for (int i = 0;i<20;i++){
-            MyItem myItem = new MyItem();
-            myItem.setName(getString(R.string.jay)+i);
-            myItem.setDescription(getString(R.string.song_night_seven)+i);
-            itemList.add(myItem);
-        }
+        mPresenter.getItemList();
     }
     private void initAppLayout() {
         appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
@@ -105,7 +93,7 @@ public class OneFragment extends BaseSupportFragment<OnePresenter> implements On
             } else {
                 swipeRefresh.setEnabled(false);
             }
-            mToolbar.setBackgroundColor(changeAlpha(getResources().getColor(R.color.white), Math.abs(verticalOffset * 1.0f) / appBarLayout.getTotalScrollRange()));
+            mToolbar.setBackgroundColor(changeAlpha(ContextCompat.getColor(_mActivity,R.color.white), Math.abs(verticalOffset * 1.0f) / appBarLayout.getTotalScrollRange()));
         });
     }
     public int changeAlpha(int color, float fraction) {
@@ -124,7 +112,7 @@ public class OneFragment extends BaseSupportFragment<OnePresenter> implements On
             }
         });
         swipeRefresh.setProgressViewOffset(true, 130, 300);
-        swipeRefresh.setColorSchemeColors(getResources().getColor(R.color.red));
+        swipeRefresh.setColorSchemeColors(ContextCompat.getColor(_mActivity,R.color.refresh_color));
     }
 
     @Override
@@ -136,5 +124,11 @@ public class OneFragment extends BaseSupportFragment<OnePresenter> implements On
     @Override
     public void showMessage(@NonNull String message) {
 
+    }
+
+    @Override
+    public void showList(List<MyItem> myItemList) {
+        mOneAdapter.addData(myItemList);
+        mOneAdapter.notifyDataSetChanged();
     }
 }
