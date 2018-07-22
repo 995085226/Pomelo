@@ -37,7 +37,7 @@ public class SplashPresenter extends BasePresenter<SplashContract.Model, SplashC
     ImageLoader mImageLoader;
     @Inject
     AppManager mAppManager;
-    private final int countDownTime = 5;
+    private final int countDownTime = 3;
 
     @Inject
     public SplashPresenter(SplashContract.Model model, SplashContract.View rootView) {

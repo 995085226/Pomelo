@@ -1,22 +1,72 @@
 package com.example.hpf.pomelo.mvp.ui.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.example.hpf.pomelo.R;
 import com.example.hpf.pomelo.app.base.BaseSupportFragment;
+import com.example.hpf.pomelo.di.component.DaggerOneComponent;
+import com.example.hpf.pomelo.di.module.OneModule;
 import com.example.hpf.pomelo.mvp.contract.OneContract;
+import com.example.hpf.pomelo.mvp.model.entity.MyItem;
 import com.example.hpf.pomelo.mvp.presenter.OnePresenter;
+import com.example.hpf.pomelo.mvp.ui.adapter.OneAdapter;
 import com.jess.arms.di.component.AppComponent;
+import com.jess.arms.utils.ArmsUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import butterknife.BindView;
 
 public class OneFragment extends BaseSupportFragment<OnePresenter> implements OneContract.View {
+
+
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout swipeRefresh;
+
+    @BindView(R.id.recycler_view)
+    RecyclerView mRecyclerView;
+
+    @BindView(R.id.banner_header)
+    View banner;
+
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.tool_bar)
+    Toolbar mToolbar;
+    @BindView(R.id.iv_conversation)
+    ImageView ivConversation;
+    @BindView(R.id.rl_search_bar)
+    RelativeLayout rlSearchBar;
+
+    @Inject
+    OneAdapter mOneAdapter;
+    private List<MyItem> itemList = new ArrayList<>();
+
+    @Inject
+    RecyclerView.LayoutManager layoutManager;
     @Override
     public void setupFragmentComponent(@NonNull AppComponent appComponent) {
-
+        DaggerOneComponent
+                .builder()
+                .appComponent(appComponent)
+                .oneModule(new OneModule(this,_mActivity))
+                .build()
+                .inject(this);
     }
 
     @Override
@@ -26,7 +76,55 @@ public class OneFragment extends BaseSupportFragment<OnePresenter> implements On
 
     @Override
     public void initData(@Nullable Bundle savedInstanceState) {
+          initAppLayout();
+          initRefresh();
+          initRV();
+    }
 
+    private void initRV() {
+        initListData();
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mOneAdapter);
+        mOneAdapter.addData(itemList);
+        mOneAdapter.notifyDataSetChanged();
+
+    }
+
+    private void initListData() {
+        for (int i = 0;i<20;i++){
+            MyItem myItem = new MyItem();
+            myItem.setName(getString(R.string.jay)+i);
+            myItem.setDescription(getString(R.string.song_night_seven)+i);
+            itemList.add(myItem);
+        }
+    }
+    private void initAppLayout() {
+        appBarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+            if (verticalOffset >= 0) {
+                swipeRefresh.setEnabled(true);
+            } else {
+                swipeRefresh.setEnabled(false);
+            }
+            mToolbar.setBackgroundColor(changeAlpha(getResources().getColor(R.color.white), Math.abs(verticalOffset * 1.0f) / appBarLayout.getTotalScrollRange()));
+        });
+    }
+    public int changeAlpha(int color, float fraction) {
+        int red = Color.red(color);
+        int green = Color.green(color);
+        int blue = Color.blue(color);
+        int alpha = (int) (Color.alpha(color) * fraction);
+        return Color.argb(alpha, red, green, blue);
+    }
+    private void initRefresh() {
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ArmsUtils.snackbarText(getString(R.string.refresh_success));
+                swipeRefresh.setRefreshing(false);
+            }
+        });
+        swipeRefresh.setProgressViewOffset(true, 130, 300);
+        swipeRefresh.setColorSchemeColors(getResources().getColor(R.color.red));
     }
 
     @Override

@@ -2,9 +2,8 @@ package com.example.hpf.pomelo.mvp.presenter;
 
 import android.app.Application;
 
-import com.example.hpf.pomelo.mvp.contract.MainContract;
 import com.example.hpf.pomelo.mvp.contract.OneContract;
-import com.jess.arms.di.scope.ActivityScope;
+import com.jess.arms.di.scope.FragmentScope;
 import com.jess.arms.http.imageloader.ImageLoader;
 import com.jess.arms.integration.AppManager;
 import com.jess.arms.mvp.BasePresenter;
@@ -14,7 +13,7 @@ import javax.inject.Inject;
 import me.jessyan.rxerrorhandler.core.RxErrorHandler;
 
 
-@ActivityScope
+@FragmentScope
 public class OnePresenter extends BasePresenter<OneContract.Model, OneContract.View> {
     @Inject
     RxErrorHandler mErrorHandler;
